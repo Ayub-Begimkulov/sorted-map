@@ -1,4 +1,4 @@
-const defaultCompare = (a: any, b: any) => (a > b ? 1 : a < b ? -1 : 0);
+const defaultCompare = (a: any, b: any): number => (a > b ? 1 : a < b ? -1 : 0);
 
 export class SortedMap<K, V> {
   root: Node<K, V> | null = null;
@@ -33,7 +33,7 @@ export class SortedMap<K, V> {
   }
 
   delete(key: K) {
-    this.root = this.remove(this.root, key);
+    this.root = this.deleteNode(this.root, key);
   }
 
   getMin() {
@@ -89,7 +89,7 @@ export class SortedMap<K, V> {
     return this.balance(node);
   }
 
-  private remove(node: Node<K, V> | null, key: K) {
+  private deleteNode(node: Node<K, V> | null, key: K) {
     if (!node) {
       return null;
     }
@@ -97,16 +97,16 @@ export class SortedMap<K, V> {
     const compareResult = this.compare(node.key, key);
 
     if (compareResult > 0) {
-      node.right = this.remove(node.right, key);
+      node.left = this.deleteNode(node.left, key);
     } else if (compareResult < 0) {
-      node.left = this.remove(node.left, key);
+      node.right = this.deleteNode(node.right, key);
     } else {
       if (node.left && node.right) {
         const maxLeftNode = this.getMaxNode(node.left);
         if (maxLeftNode) {
           node.value = maxLeftNode.value;
           node.key = maxLeftNode.key;
-          this.remove(node.left, maxLeftNode.key);
+          this.deleteNode(node.left, maxLeftNode.key);
         }
       } else if (node.left) {
         return node.left;
@@ -177,9 +177,9 @@ export class SortedMap<K, V> {
   private rotateRight(node: Node<K, V> | null) {
     if (!node) return null;
     const leftNode = node.left!;
-    const leftNodeLeftChild = node.left?.right || null;
-    node.left = leftNodeLeftChild;
-    leftNode.left = node;
+    const leftNodeRightChild = node.left?.right || null;
+    node.left = leftNodeRightChild;
+    leftNode.right = node;
     this.update(node);
     this.update(leftNode);
     return leftNode;

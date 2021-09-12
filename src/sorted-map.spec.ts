@@ -24,4 +24,20 @@ describe("SortedMap", () => {
 
     expect(map.getMin()).toBe(1);
   });
+
+  it("delete", () => {
+    map.set(6, "asdfgh");
+    map.set(1, "a");
+    map.set(4, "asdf");
+    map.set(2, "as");
+
+    expect(map.getMin()).toBe(1);
+    expect(map.getMax()).toBe(6);
+
+    map.delete(1);
+    map.delete(6);
+
+    expect(map.getMin()).toBe(2);
+    expect(map.getMax()).toBe(4);
+  });
 });
