@@ -13,7 +13,7 @@ export class SortedMap<K, V> {
   private findNode(node: Node<K, V> | null, key: K): V | undefined {
     if (!node) return;
 
-    const compareResult = this.compare(node.key, key);
+    const compareResult = this.compare(key, node.key);
 
     if (compareResult > 0) {
       return this.findNode(node.right, key);
@@ -109,8 +109,10 @@ export class SortedMap<K, V> {
           this.deleteNode(node.left, maxLeftNode.key);
         }
       } else if (node.left) {
+        this.size--;
         return node.left;
       } else if (node.right) {
+        this.size--;
         return node.right;
       } else {
         this.size--;
